@@ -248,7 +248,7 @@ class Oven(threading.Thread):
         to wait for the kiln to catch up'''
         if config.kiln_must_catch_up == True:
             temp = self.board.temp_sensor.temperature + \
-                config.thermocouple_offset
+                config.thermocouple_offset * config.thermocouple_mult
             # kiln too cold, wait for it to heat up
             if self.target - temp > config.pid_control_window:
                 log.info("kiln must catch up, too cold, shifting schedule")
@@ -271,7 +271,7 @@ class Oven(threading.Thread):
 
     def reset_if_emergency(self):
         '''reset if the temperature is way TOO HOT, or other critical errors detected'''
-        if (self.board.temp_sensor.temperature + config.thermocouple_offset >=
+        if (self.board.temp_sensor.temperature + config.thermocouple_offset * config.thermocouple_mult >=
             config.emergency_shutoff_temp):
             log.info("emergency!!! temperature too high")
             if config.ignore_temp_too_high == False:
@@ -308,7 +308,7 @@ class Oven(threading.Thread):
     def get_state(self):
         temp = 0
         try:
-            temp = self.board.temp_sensor.temperature + config.thermocouple_offset
+            temp = self.board.temp_sensor.temperature + config.thermocouple_offset * config.thermocouple_mult
         except AttributeError as error:
             # this happens at start-up with a simulated oven
             temp = 0
@@ -450,7 +450,7 @@ class SimulatedOven(Oven):
     def heat_then_cool(self):
         pid = self.pid.compute(self.target,
                                self.board.temp_sensor.temperature +
-                               config.thermocouple_offset)
+                               config.thermocouple_offset * config.thermocouple_mult)
         heat_on = float(self.time_step * pid)
         heat_off = float(self.time_step * (1 - pid))
 
@@ -512,7 +512,7 @@ class RealOven(Oven):
     def heat_then_cool(self):
         pid = self.pid.compute(self.target,
                                self.board.temp_sensor.temperature +
-                               config.thermocouple_offset)
+                               config.thermocouple_offset * config.thermocouple_mult)
         heat_on = float(self.time_step * pid)
         heat_off = float(self.time_step * (1 - pid))
 

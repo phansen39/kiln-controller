@@ -135,6 +135,7 @@ pid_control_window = 5 #degrees
 # set set this offset to -4 to compensate.  This probably means you have a
 # cheap thermocouple.  Invest in a better thermocouple.
 thermocouple_offset=0
+thermocouple_mult=1
 
 # number of samples of temperature to average.
 # If you suffer from the high temperature kiln issue and have set 
